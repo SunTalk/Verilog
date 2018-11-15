@@ -1,6 +1,6 @@
 //This module is the highest level of the module.
 // it includes all the input and output in the DE2-70
-module adder7(
+module subtractor4(
 // Clock Input (50 MHz)
 	input  CLOCK_50,
 	//  Push Buttons
@@ -33,8 +33,11 @@ module adder7(
 	//    A <= SW[15:0];
 	// I am adding this code to
 
-	seven_bit(cout,sum[6:0],SW[13:7],SW[6:0],1'b0);
-	assign sum[7]=cout;
+	four_bits(cout,sum[3:0],SW[7:4],SW[3:0],1'b0);
+	assign sum[4] = cout ;
+	assign sum[5] = 1'b0 ;
+	assign sum[6] = 1'b0 ;
+	assign sum[7] = 1'b0 ;
 
 	// Now I call the BCD here to convert the result to various HEX display.
 	BCD(sum[7:0],ONES, TENS,HUNDREDS);
@@ -78,7 +81,6 @@ module BCD (A,ONES, TENS, HUNDREDS);
 	add3 m6(d6,c6); 
 	add3 m7(d7,c7); 
 endmodule
-
 
 // This module is called from the previous module to calculate
 // the 8-bits to three different HEX.
@@ -130,30 +132,25 @@ module hex_7seg(hex_digit,seg);
 	endcase
 endmodule
 
-//Here I have the four binary Adder module (ADDER Logic)
-module f_adder(sum,cout,cin,inp1,inp2);
+module f_subtractor ( diff, cout, cin, inp1, inp2);
+	
 	input cin, inp1, inp2;
-	output sum,cout;
-	wire w1,w2,w3;
-	xor x1(w1,inp1,inp2);
-	xor x2(sum,w1,cin);
-	and a1(w2,inp1,inp2);
-	and a2(w3,w1,cin);
-	or(cout,w2,w3);
-endmodule
+	output diff,cout;
+	assign diff = cin ^ inp1 ^ inp2;
+	assign cout = ( ~cin & inp1 ) | ( inp1 & inp2 ) | ( inp2 & ~cin );
 
-module seven_bit(cout,sum,x,y,cin);
-	input [6:0] x,y;
+endmodule 
+
+module four_bits(cout,sum,x,y,cin);
+	input [3:0] x,y;
 	input cin;
-	output [6:0] sum;
+	output [3:0] sum;
 	output cout;
-	wire d1,d2,d3,d4,d5,d6;
-	f_adder f1(sum[0],d1,x[0],y[0],cin);
-	f_adder f2(sum[1],d2,x[1],y[1],d1);
-	f_adder f3(sum[2],d3,x[2],y[2],d2);
-	f_adder f4(sum[3],d4,x[3],y[3],d3);
-	f_adder f5(sum[4],d5,x[4],y[4],d4);
-	f_adder f6(sum[5],d6,x[5],y[5],d5);
-	f_adder f7(sum[6],cout,x[6],y[6],d6);
+	wire d1,d2,d3;
+	f_subtractor f1(sum[0],d1,x[0],y[0],cin);
+	f_subtractor f2(sum[1],d2,x[1],y[1],d1);
+	f_subtractor f3(sum[2],d3,x[2],y[2],d2);
+	f_subtractor f4(sum[3],cout,x[3],y[3],d3);
+	
 endmodule
 
