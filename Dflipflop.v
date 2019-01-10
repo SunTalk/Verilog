@@ -133,30 +133,42 @@ endcase
 endmodule 
 
 module countercode(D,clk,load,Q);
-	input[2:0] D;
-	input clk;
-	input load;
-	output [2:0] Q;
-	
-	wire  DA1, DA2,DB1,DB2,DB3,DC1,DC2,DC3;
-	reg [2:0] cnt;
-	// A =cnt[0]  B=cnt[1]  C=cnt[2]
-	always@(negedge clk)
-	begin
-		if(~load)
-			cnt=D;
-		else 
-			cnt =Q;
-		end
-	
-	assign DA2 = (( cnt[2] & cnt[0] ) | ~cnt[1]);
-	D_flip_flop(DA2,clk,Q[2]);
-	
-	assign DB3 = ((cnt[2] & cnt[0])|( cnt[1] & ~cnt[0] )) ;
-	D_flip_flop(DB3,clk,Q[1]);
-	
-	assign DC3 = ( (cnt[2] & ~cnt[1]) | ( ~cnt[2] & cnt[1] ) );
-	D_flip_flop(DC3,clk,Q[0]);
+  input[3:0] D;
+  input clk;
+  input load;
+  output [3:0] Q;
+
+  reg X,Y,Z,W;
+
+  always@(negedge clk)
+   begin
+       if(~load)
+        {X,Y,Z,W} = D;
+       else 
+        {X,Y,Z,W} = Q;
+    end
+    
+	/**********************change here**********************/ 
+  assign Dx = ;    
+
+  D_flip_flop(Dx,clk,Q[3]);
+
+
+  assign Dy = ;
+
+  D_flip_flop(Dy,clk,Q[2]);
+
+
+  assign Dz = ;
+
+  D_flip_flop(Dz,clk,Q[1]);
+
+  assign Dw = ;
+
+  D_flip_flop(Dw,clk,Q[0]);
+	/**********************change here**********************/ 
+
+
 endmodule 
 	
 module D_flip_flop(D,clock,Q);
